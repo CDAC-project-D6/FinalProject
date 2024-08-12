@@ -44,8 +44,8 @@ public class PropertySeviceImpl implements PropertyService {
 	@Autowired
 	OwnerDao ownerDao;
 	
-	@Value("${image.upload.dir}")
-	private String uploadDir;
+//	@Value("${image.upload.dir}")
+//	private String uploadDir;
 
 	@Override
 	public List<PropertyDTO> getAllProperties() {
@@ -80,14 +80,14 @@ public class PropertySeviceImpl implements PropertyService {
 		property.setCategory(category);
 		
 		//Handle file upload for main image
-		MultipartFile file = propertyDTO.getFile();
-        if (file != null && !file.isEmpty()) {
-            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-            Path filePath = Paths.get(uploadDir, fileName).toAbsolutePath().normalize();
-            Files.createDirectories(filePath.getParent()); // Ensure the directory exists
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            property.setMainImgUrl(fileName); // Set the file path in the product entity
-        }
+//		MultipartFile file = propertyDTO.getFile();
+//        if (file != null && !file.isEmpty()) {
+//            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+//            Path filePath = Paths.get(uploadDir, fileName).toAbsolutePath().normalize();
+//            Files.createDirectories(filePath.getParent()); // Ensure the directory exists
+//            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+//            property.setMainImgUrl(fileName); // Set the file path in the product entity
+//        }
 		
 		propertyDao.save(property);
 		

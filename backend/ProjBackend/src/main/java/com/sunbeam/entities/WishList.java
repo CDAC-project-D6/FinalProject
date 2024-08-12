@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.OneToMany;
+
+import java.util.HashSet;
 import java.util.Set;
 
 import lombok.Getter;
@@ -33,8 +35,8 @@ public class WishList {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "wishlist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<WishListItem> items;
+    @OneToMany(mappedBy = "wishlist", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<WishListItem> items = new HashSet<>();
 
     // Add any additional fields or methods related to WishList
 
@@ -42,11 +44,18 @@ public class WishList {
 
     // Example method to add an item to the wishlist
     public void addItem(WishListItem item) {
-    	if (item == null) {
-            throw new IllegalArgumentException("Item cannot be null");
-        }
+//    	if (item == null) {
+//            throw new IllegalArgumentException("Item cannot be null");
+//        }
+//        this.items.add(item);
+//        item.setWishlist(this);
+        
         this.items.add(item);
+		
+//		wishListItem.setWishlist(this);
         item.setWishlist(this);
+        
+        
     }
 
     // Example method to remove an item from the wishlist

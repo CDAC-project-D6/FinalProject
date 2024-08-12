@@ -41,43 +41,92 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
-    public WishListItemDTO addItemToWishlist(Long userId, Long propertyId) {
-        WishList wishlist = getWishlistByUserId(userId);
+    public String addItemToWishlist(Long userId, Long propertyId) {
+    	User user = userDao.findById(userId).orElseThrow();
+    	Property property = propertyDao.findById(propertyId).orElseThrow();
+       WishList wishlist= user.getWishlist();
+//        WishList wishlist = getWishlistByUserId(userId);
         if (wishlist == null) {
             wishlist = new WishList();
-            User user = userDao.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-            wishlist.setUser(user);
+//            User user = userDao.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+           user.setWishlist(wishlist);
+           wishlist.setUser(user);
+//            wishlist.setUser(user);
             wishListDao.save(wishlist);
         }
-
-        Property property = propertyDao.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found"));
-        WishListItem item = new WishListItem();
-        item.setWishlist(wishlist);
-        item.setProperty(property);
-        wishListItemDao.save(item);
         
-        wishlist.addItem(item); // Update the wishlist with the new item
-        wishListDao.save(wishlist); // Save the wishlist with the updated items
-
-        WishListItemDTO itemDTO = new WishListItemDTO();
-        itemDTO.setId(item.getId());
-        itemDTO.setWishlistId(wishlist.getId());
-        itemDTO.setPropertyId(property.getId());
-
-        return itemDTO;
-    }
-
-
-    @Override
-    public void removeItemFromWishlist(Long userId, Long itemId) {
-        WishList wishlist = getWishlistByUserId(userId);
-        if (wishlist != null) {
-            WishListItem item = wishListItemDao.findById(itemId).orElseThrow(() -> new RuntimeException("Item not found"));
-            wishlist.removeItem(item); // Remove the item from the wishlist
-            wishListItemDao.delete(item); // Delete the item from the database
-            wishListDao.save(wishlist); // Save the wishlist with the updated items
+//        for (WishListItem item : wishlist.getItems()) {
+//            if (item.getProperty().equals(property)) {
+//                return "Product already in wishlist";
+//            }
+        for (WishListItem item : wishlist.getItems()) {
+            if (item.getProperty().getTitle().equals(property.getTitle())) {
+                return "Property already in wishlist";
+            }
         }
+        
+        WishListItem wishlistItem = new WishListItem();
+        wishlistItem.setProperty(property);
+        
+        wishlist.addItem(wishlistItem);
+       
+
+        wishListDao.save(wishlist);
+        
+        
+        
+        
+        
+        
+
+//        Property property = propertyDao.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found"));
+//        WishListItem item = new WishListItem();
+//        item.setWishlist(wishlist);
+//        item.setProperty(property);
+//        wishListItemDao.save(item);
+//        
+//        wishlist.addItem(item); // Update the wishlist with the new item
+//        wishListDao.save(wishlist); // Save the wishlist with the updated items
+//
+//        WishListItemDTO itemDTO = new WishListItemDTO();
+//        itemDTO.setId(item.getId());
+//        itemDTO.setWishlistId(wishlist.getId());
+//        itemDTO.setPropertyId(property.getId());
+
+        return "added in wishlist";
     }
+
+
+	@Override
+	public String removeProperty(Long propertyId, Long userId) {
+	    
+	    User user = userDao.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+	    
+	    WishList wishList = user.getWishlist();
+	    if (wishList == null) {
+	        throw new RuntimeException("Wishlist not found");
+	    }
+
+	   
+	    WishListItem itemToDelete = null;
+	    for (WishListItem wishlistItem : wishList.getItems()) {
+	        if (wishlistItem.getProperty().getId().equals(propertyId)) {
+	            itemToDelete = wishlistItem;
+	            break;
+	        }
+	    }
+
+	    
+	    if (itemToDelete != null) {
+	        wishList.getItems().remove(itemToDelete);  
+	        wishListItemDao.deleteById(itemToDelete.getId());  
+	    } else {
+	        throw new RuntimeException("Property not found in wishlist");
+	    }
+
+	    return "Item deleted";
+	}
 
 
     @Override
