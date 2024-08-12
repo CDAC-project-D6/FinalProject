@@ -43,7 +43,8 @@ public class PropertyDTO {
 
 //    private Owner owner;
     
-    private MultipartFile file;
+//    private MultipartFile file;
+    private AddressDTO propAddress;
 	
 	
 	
