@@ -86,7 +86,7 @@ const SignIn = () => {
             onChange={(e) => {
               setPassword(e.target.value)
             }}
-            type="email" placeholder="password" />
+            type="password" placeholder="password" />
         </div>
 
         <div className='flex flex-row'>
